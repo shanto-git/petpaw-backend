@@ -28,10 +28,22 @@ async function run() {
   try {
     await client.connect();
 
+    const database = client.db('petListing');
+    const petListing = database.collection('listing');
+
     app.post('/listing', async(req,res)=>{
         const data = req.body;
+        const date = new Date();
+        data.createdAt = date;
         console.log(data);
+        const result = await petListing.insertOne(data);
+        res.send(result)
         
+    })
+
+    app.get('/listing', async(req, res)=>{
+        const result = await petListing.find().toArray();
+        res.send(result)
     })
 
     await client.db("admin").command({ ping: 1 });
