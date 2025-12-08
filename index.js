@@ -13,7 +13,7 @@ app.use(express.json());
 
 
 
-const uri = "mongodb+srv://missionscic:Tu7UlBdHGJyHUtDX@cluster0.o6mocqo.mongodb.net/?appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.o6mocqo.mongodb.net/?appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -26,7 +26,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
 
     const database = client.db('petListing');
     const petListing = database.collection('listing');
@@ -92,11 +92,12 @@ async function run() {
     })
 
     app.get('/orders', async(req, res)=>{
-      const result = await orderCollection.find().toArray;
+      const order = req.body;
+      const result = await orderCollection.find().toArray()
       res.status(200).send(result)
     })
 
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // await client.close();
